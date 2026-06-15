@@ -8,10 +8,12 @@ import { FortuneGraph } from "@/components/FortuneGraph";
 import { ElementBalance } from "@/components/ElementBalance";
 import { ComfortCard, BreathingTool, JournalTool } from "@/components/ComfortCard";
 import { ShareCard } from "@/components/ShareCard";
+import { CareerFortune } from "@/components/CareerFortune";
 import { FunLabel, RefLabel } from "@/components/Disclaimer";
 import { computeSaju, BirthInput } from "@/lib/saju/engine";
 import { computeFortuneSeries } from "@/lib/saju/fortune";
 import { interpret } from "@/lib/saju/interpret";
+import { readCareer } from "@/lib/saju/career";
 import { lunarToSolar } from "@/lib/saju/lunar";
 import { Profile, loadProfiles, saveProfile, deleteProfile } from "@/lib/store/profiles";
 
@@ -70,7 +72,8 @@ export default function AppPage() {
     const chart = computeSaju(input);
     const series = computeFortuneSeries(chart);
     const interp = interpret(chart, series.yong);
-    return { chart, series, interp, warn };
+    const career = readCareer(chart, series);
+    return { chart, series, interp, career, warn };
   }, [active]);
 
   return (
@@ -194,6 +197,15 @@ export default function AppPage() {
             </p>
             <p className="mt-2 text-sm leading-relaxed">{result.interp.elementDetail}</p>
             <p className="mt-2 text-sm">{result.interp.phase}</p>
+          </section>
+
+          {/* 직업·취업운 (취준 핵심) */}
+          <section className="card p-5" style={{ borderColor: "#A9BE9E" }}>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold">직업·취업운</h2>
+              <FunLabel text="명리 기반 · 참고용" />
+            </div>
+            <CareerFortune reading={result.career} />
           </section>
 
           {/* 내 안의 기운 (십성) */}
